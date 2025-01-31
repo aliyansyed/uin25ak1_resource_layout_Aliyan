@@ -1,32 +1,33 @@
-console.log(resources);
+console.log(resources)
+const navigasjonselementer = document.querySelectorAll(".navigation li");
+const innhold = document.getElementById("content");
 
-const contentContainer = document.getElementById("content");
-const categoryItems = document.querySelectorAll(".navigation li");
+let innholdHTML = "";
 
-let activeCategory = "HTML";
+function oppdaterInnhold(kategori) {
+    const valgtRessurs = resources.filter(ressurs => ressurs.category === kategori)[0];
 
-function renderCategoryContent(category) {
-    contentContainer.innerHTML = resources
-        .filter(resource => resource.category === category)
-        .map(resource => `
-            <article class="resource-card">
-                <h2>${resource.category}</h2>
-                <p>${resource.text}</p>
-                <ul>
-                    ${resource.sources.map(source => 
-                        `<li><a href="${source.url}" target="_blank">${source.title}</a></li>`
-                    ).join("")}
-                </ul>
-            </article>
-        `).join(""); 
+    if (valgtRessurs) {
+        innholdHTML = `<h1>${valgtRessurs.category}</h1>
+                       <p>${valgtRessurs.text}</p>
+                       <ul>`;
+
+        valgtRessurs.sources.map(kilde => {
+            innholdHTML += `<li><a href="${kilde.url}" target="_blank">${kilde.title}</a></li>`;
+        });
+
+        innholdHTML += `</ul>`;
+    }
+
+    innhold.innerHTML = innholdHTML;
 }
 
-renderCategoryContent(activeCategory);
+oppdaterInnhold("HTML");
 
-categoryItems.forEach(categoryItem => {
-    categoryItem.addEventListener("click", function() {
-        categoryItems.forEach(item => item.classList.remove("selected"));
-        this.classList.add("selected");
-        renderCategoryContent(this.textContent.trim());
+navigasjonselementer.forEach(element => {
+    element.addEventListener("click", () => {
+        navigasjonselementer.forEach(nav => nav.classList.remove("selected"));
+        element.classList.add("selected");
+        oppdaterInnhold(element.textContent.trim());
     });
 });
